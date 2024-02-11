@@ -1,0 +1,44 @@
+version: '3.7'
+
+services:
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    image: server-react-app
+    container_name: ecomm-node-server
+    command: /server/app/node_modules/.bin/nodemon index.js
+    volumes:
+      - ./server/:/server/app 
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=development
+      # - MONGODB_URI=your_mongodb_atlas_connection_uri
+    networks:
+      - app-network
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    image: client-react-app
+    container_name: ecomm-react-client
+    command: npm start
+    volumes:
+      - ./client/:/app 
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  data-volume:
+  node_modules:
+
